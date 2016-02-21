@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivPhoto"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:minHeight="50sp"
+        android:minWidth="50sp"
+        android:paddingTop="5sp"
+        android:paddingBottom="5sp"
+        android:layout_below="@+id/ivProfilePicture"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivProfilePicture"
+        android:adjustViewBounds="false"
+        android:maxHeight="50dp"
+        android:maxWidth="50dp"
+        android:minHeight="50sp"
+        android:minWidth="50sp"
+        android:src="@android:mipmap/sym_def_app_icon"
+        android:paddingBottom="5dp"
+        android:paddingTop="10sp"
+        android:paddingRight="5sp"
+        android:layout_below="@+id/tbSearch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tvUserName"
+        android:textStyle="bold"
+        android:textColor="@color/textbody"
+        android:textColorHighlight="@color/textbody"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/tbSearch"
+        android:layout_toRightOf="@+id/ivProfilePicture"
+        android:layout_toEndOf="@+id/ivProfilePicture" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/tVTimeSincePosting"
+        android:textStyle="bold"
+        android:textColor="@color/textbody"
+        android:textColorHighlight="@color/textbody"
+        android:paddingBottom="5dip"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/tbSearch"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tweet"
+        android:id="@+id/tvTweet"
+        android:paddingRight="10sp"
+
+        android:layout_below="@+id/tVTimeSincePosting"
+        android:layout_toRightOf="@+id/ivProfilePicture"
+        android:layout_toEndOf="@+id/ivProfilePicture" />
+
+    <View android:id="@+id/separator"
+        android:background="#AB9B96"
+        android:layout_width = "fill_parent"
+        android:layout_height="1dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivPhoto" />
+
+</RelativeLayout>
