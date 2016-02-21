@@ -35,6 +35,7 @@ public class TimelineActivity extends AppCompatActivity {
     private final int REQUEST_CODE_DISPLAY = 30;
     User currentUser;
     private String status;
+    Tweet insertedTweet;
 
 
     @Override
@@ -42,7 +43,8 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         ButterKnife.bind(this);
-
+        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        //getActionBar().hide();
         client = RestApplication.getRestClient();
         currentUser = new User();
 
@@ -140,6 +142,7 @@ public class TimelineActivity extends AppCompatActivity {
                 intent.putExtra("name", currentUser.getName());
                 intent.putExtra("profileURl", currentUser.getProfileImageUrl());
                 startActivityForResult(intent, REQUEST_CODE_DISPLAY);
+
             }
 
             @Override
@@ -157,8 +160,12 @@ public class TimelineActivity extends AppCompatActivity {
             status = data.getExtras().getString("status");
             client.insertTweet(new JsonHttpResponseHandler() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
+                    insertedTweet = Tweet.fromJson(response);
+                    allTweets.add(0,insertedTweet);
+                    rcAdapter.notifyItemRangeInserted(0, 1);
+                    linearLayoutManager.scrollToPositionWithOffset(0, 0);
                 }
 
                 @Override
@@ -169,7 +176,7 @@ public class TimelineActivity extends AppCompatActivity {
             }, status);
            // allTweets.clear();
           //  rcAdapter.notifyDataSetChanged();
-            populateTimeline();
+           // populateTimeline();
         }
 
     }

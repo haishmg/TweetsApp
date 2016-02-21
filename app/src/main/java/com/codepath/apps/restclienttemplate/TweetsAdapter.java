@@ -58,12 +58,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals("")) {
             holder.ivPhoto.clearFocus();
             Glide.with(context).load(allTweets.get(position).getEntity().getMedia_url()).fitCenter().into(holder.ivPhoto);
-           // Picasso.with(context).load(allTweets.get(position).getEntity().getMedia_url()).into(holder.ivPhoto);
         }
-        else
-        {
+        else{
             holder.ivPhoto.setImageDrawable(null);
         }
+
 
     }
 
