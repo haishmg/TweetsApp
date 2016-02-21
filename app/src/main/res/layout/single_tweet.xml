@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    style="@style/AppBaseTheme">
 
 
     <ImageView
@@ -73,8 +74,7 @@
         android:layout_below="@+id/tVTimeSincePosting"
         android:layout_toRightOf="@+id/ivProfilePicture"
         android:layout_alignRight="@+id/tVTimeSincePosting"
-        android:layout_alignEnd="@+id/tVTimeSincePosting"
-        android:layout_above="@+id/ivPhoto" />
+        android:layout_alignEnd="@+id/tVTimeSincePosting" />
 
     <View android:id="@+id/separator"
         android:background="#AB9B96"

@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -49,14 +50,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
 
     @Override
     public void onBindViewHolder(ArticleViewHolders holder, int position) {
-
         holder.tvTweet.setText(allTweets.get(position).getBody().toString());
         holder.tvUserName.setText(allTweets.get(position).getUser().getName().toString());
         //Glide.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).fitCenter().into(holder.ivProfilePicture);
         Picasso.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).transform(new CircleTransform()).into(holder.ivProfilePicture);
         holder.tvTimeSincePosting.setText(allTweets.get(position).getRelativeTime());
-        if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals(""))
-            Picasso.with(context).load(allTweets.get(position).getEntity().getMedia_url()).into(holder.ivPhoto);
+        if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals("")) {
+            holder.ivPhoto.clearFocus();
+            Glide.with(context).load(allTweets.get(position).getEntity().getMedia_url()).fitCenter().into(holder.ivPhoto);
+           // Picasso.with(context).load(allTweets.get(position).getEntity().getMedia_url()).into(holder.ivPhoto);
+        }
+        else
+        {
+            holder.ivPhoto.setImageDrawable(null);
+        }
 
     }
 

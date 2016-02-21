@@ -97,6 +97,8 @@ public class TimelineActivity extends AppCompatActivity {
         rcAdapter.notifyDataSetChanged();
         since_id = 1;
         max_id = 1;
+        int initSize = allTweets.size();
+
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -106,7 +108,8 @@ public class TimelineActivity extends AppCompatActivity {
                     try {
                         tweet = Tweet.fromJson(response.getJSONObject(i));
                         allTweets.add(tweet);
-                        rcAdapter.notifyItemChanged(allTweets.size());
+                        //rcAdapter.notifyItemChanged(allTweets.size());
+                        rcAdapter.notifyItemRangeInserted(i, allTweets.size());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -121,6 +124,8 @@ public class TimelineActivity extends AppCompatActivity {
                 System.out.print("Inside failure");
             }
         }, since_id, count);
+
+
     }
 
     public void insertNewTweet(View v) {
