@@ -29,8 +29,8 @@ public class TimelineActivity extends AppCompatActivity {
     TweetsAdapter rcAdapter;
     LinearLayoutManager linearLayoutManager;
     private static int count = 50;
-    private static long since_id = 1;
-    private static long max_id = 1;
+    private  long since_id = 1;
+    private  long max_id = 1;
     @Bind((R.id.swipeContainer)) SwipeRefreshLayout swipeContainer;
     private final int REQUEST_CODE_DISPLAY = 30;
     User currentUser;
@@ -54,8 +54,6 @@ public class TimelineActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         rcAdapter = new TweetsAdapter(TimelineActivity.this, allTweets);
         recyclerView.setAdapter(rcAdapter);
-        allTweets.clear();
-        rcAdapter.notifyDataSetChanged();
         populateTimeline();
 
 
@@ -95,7 +93,10 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void populateTimeline() {
-
+        allTweets.clear();
+        rcAdapter.notifyDataSetChanged();
+        since_id = 1;
+        max_id = 1;
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -125,6 +126,7 @@ public class TimelineActivity extends AppCompatActivity {
     public void insertNewTweet(View v) {
 
         client.getCurrentUserInfo(new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -148,7 +150,7 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DISPLAY) {
             status = data.getExtras().getString("status");
-            client.insertTweet (new JsonHttpResponseHandler() {
+            client.insertTweet(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     super.onSuccess(statusCode, headers, response);
@@ -160,8 +162,8 @@ public class TimelineActivity extends AppCompatActivity {
                     System.out.print("Inside failure");
                 }
             }, status);
-            allTweets.clear();
-            rcAdapter.notifyDataSetChanged();
+           // allTweets.clear();
+          //  rcAdapter.notifyDataSetChanged();
             populateTimeline();
         }
 
@@ -170,7 +172,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void getmoreTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
-
+            int initSize = allTweets.size();
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -180,14 +182,14 @@ public class TimelineActivity extends AppCompatActivity {
                     try {
                         tweet = Tweet.fromJson(response.getJSONObject(i));
                         allTweets.add(tweet);
-                        rcAdapter.notifyItemChanged(allTweets.size());
+                       // rcAdapter.notifyItemRangeInserted
+                       //rcAdapter.notifyItemChanged(allTweets.size());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
-
+                rcAdapter.notifyItemRangeInserted(initSize,allTweets.size());
             }
 
 

@@ -16,13 +16,16 @@ public class Entity {
 
     public static Entity fromJson(JSONObject jsonObject) {
         Entity u = new Entity();
+        u.media_url="";
         try {
             if(jsonObject.has("media")) {
                 JSONArray jarray = jsonObject.getJSONArray("media");
                 for (int i = 0; i < jarray.length(); i++) {
                     JSONObject jObject = (JSONObject) jarray.get(i);
-                    if (jObject.getString("media_url") != null)
+                    if (jObject.getString("media_url") != null) {
                         u.media_url = jObject.getString("media_url");
+                        break;
+                    }
                 }
             }
         } catch (JSONException e) {

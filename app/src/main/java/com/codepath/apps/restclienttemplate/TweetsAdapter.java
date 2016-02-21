@@ -54,10 +54,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         holder.tvUserName.setText(allTweets.get(position).getUser().getName().toString());
         //Glide.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).fitCenter().into(holder.ivProfilePicture);
         Picasso.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).transform(new CircleTransform()).into(holder.ivProfilePicture);
-
         holder.tvTimeSincePosting.setText(allTweets.get(position).getRelativeTime());
-        if (allTweets.get(position).getEntity().getMedia_url() != null)
-            Picasso.with(context).load(allTweets.get(position).getEntity().getMedia_url()).placeholder(R.drawable.progress_animation).into(holder.ivPhoto);
+        if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals(""))
+            Picasso.with(context).load(allTweets.get(position).getEntity().getMedia_url()).into(holder.ivPhoto);
 
     }
 

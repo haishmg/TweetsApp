@@ -14,8 +14,9 @@
         android:paddingTop="5sp"
         android:paddingBottom="5sp"
         android:layout_below="@+id/ivProfilePicture"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignRight="@+id/tvTweet"
+        android:layout_alignEnd="@+id/tvTweet"
+        android:layout_marginTop="50dp" />
 
 
 
@@ -32,7 +33,6 @@
         android:paddingBottom="5dp"
         android:paddingTop="10sp"
         android:paddingRight="5sp"
-        android:layout_below="@+id/tbSearch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"></ImageView>
 
@@ -46,7 +46,6 @@
         android:textColor="@color/textbody"
         android:textColorHighlight="@color/textbody"
         android:paddingTop="5sp"
-        android:layout_below="@+id/tbSearch"
         android:layout_toRightOf="@+id/ivProfilePicture"
         android:layout_toEndOf="@+id/ivProfilePicture" />
 
@@ -61,7 +60,6 @@
         android:textColorHighlight="@color/textbody"
         android:paddingBottom="5dip"
         android:paddingTop="5sp"
-        android:layout_below="@+id/tbSearch"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -71,10 +69,12 @@
         android:text="Tweet"
         android:id="@+id/tvTweet"
         android:paddingRight="10sp"
-
+        android:scaleType="fitXY"
         android:layout_below="@+id/tVTimeSincePosting"
         android:layout_toRightOf="@+id/ivProfilePicture"
-        android:layout_toEndOf="@+id/ivProfilePicture" />
+        android:layout_alignRight="@+id/tVTimeSincePosting"
+        android:layout_alignEnd="@+id/tVTimeSincePosting"
+        android:layout_above="@+id/ivPhoto" />
 
     <View android:id="@+id/separator"
         android:background="#AB9B96"
