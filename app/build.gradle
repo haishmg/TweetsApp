@@ -38,5 +38,4 @@ dependencies {
     compile 'org.parceler:parceler-api:1.0.4'
 
 
-
 }

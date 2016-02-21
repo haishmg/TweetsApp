@@ -16,7 +16,6 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -46,9 +45,8 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = RestApplication.getRestClient();
         currentUser = new User();
-        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("User"));
 
-                allTweets = new ArrayList<Tweet>();
+         allTweets = new ArrayList<Tweet>();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvTweets);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -59,27 +57,23 @@ public class TimelineActivity extends AppCompatActivity {
         allTweets.clear();
         rcAdapter.notifyDataSetChanged();
         populateTimeline();
+
+
        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                allTweets.clear();
-                rcAdapter.notifyDataSetChanged();
-                populateTimeline();
-                swipeContainer.setRefreshing(false);
-            }
-        });
+           @Override
+           public void onRefresh() {
+               allTweets.clear();
+               rcAdapter.notifyDataSetChanged();
+               populateTimeline();
+               swipeContainer.setRefreshing(false);
+           }
+       });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        swipeContainer.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeContainer.setRefreshing(true);
-            }
-        });
 
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
@@ -130,15 +124,23 @@ public class TimelineActivity extends AppCompatActivity {
 
     public void insertNewTweet(View v) {
 
-        Intent intent = new Intent(this, InsertTweetActivity.class);
-        if (currentUser.getName() != null) {
-            intent.putExtra("User", Parcels.wrap(currentUser));
-            intent.putExtra("noUser", "false");
-        }
-        else
-            intent.putExtra("noUser", "true");
+        client.getCurrentUserInfo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                currentUser = User.fromJson(response);
+                Intent intent = new Intent(TimelineActivity.this, InsertTweetActivity.class);
+                intent.putExtra("name", currentUser.getName());
+                intent.putExtra("profileURl", currentUser.getProfileImageUrl());
+                startActivityForResult(intent, REQUEST_CODE_DISPLAY);
+            }
 
-        startActivityForResult(intent, REQUEST_CODE_DISPLAY);
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+
 
     }
 
@@ -150,11 +152,7 @@ public class TimelineActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     super.onSuccess(statusCode, headers, response);
-                    allTweets.clear();
-                    rcAdapter.notifyDataSetChanged();
-                    populateTimeline();
                 }
-
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
@@ -162,19 +160,20 @@ public class TimelineActivity extends AppCompatActivity {
                     System.out.print("Inside failure");
                 }
             }, status);
+            allTweets.clear();
+            rcAdapter.notifyDataSetChanged();
+            populateTimeline();
         }
 
     }
 
 
     private void getmoreTimeline() {
-
         client.getHomeTimeline(new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
-
 
                 for (int i = 0; i < response.length(); i++) {
                     Tweet tweet = null;

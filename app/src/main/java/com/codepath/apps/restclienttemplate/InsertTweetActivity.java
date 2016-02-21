@@ -17,8 +17,6 @@ import com.codepath.apps.restclienttemplate.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.parceler.Parcels;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -35,12 +33,12 @@ public class InsertTweetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert_tweet);
         ButterKnife.bind(this);
         User currentUser = new User();
-        String noUser = getIntent().getExtras().getString("noUser");
-        if (noUser.equals("false")) {
-            currentUser =  Parcels.unwrap(getIntent().getParcelableExtra("User"));
-           Picasso.with(InsertTweetActivity.this).load(currentUser.getProfileImageUrl()).transform(new CircleTransform()).into(ivProfilePicture);
-           tvUserName.setText(currentUser.getName());
-        }
+        //String noUser = getIntent().getExtras().getString("noUser");
+       // if (noUser.equals("false")) {
+       // currentUser =  Parcels.unwrap(getIntent().getParcelableExtra("User"));
+        Picasso.with(InsertTweetActivity.this).load(getIntent().getExtras().getString("profileURl")).transform(new CircleTransform()).into(ivProfilePicture);
+        tvUserName.setText(getIntent().getExtras().getString("name"));
+       // }
     }
 
     public void insertTweetDone(View v){
