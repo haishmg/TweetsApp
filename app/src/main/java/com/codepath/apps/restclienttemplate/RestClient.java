@@ -63,7 +63,7 @@ public class RestClient extends OAuthBaseClient {
 	public void getCurrentUserInfo(AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("account/verify_credentials.json");
 		RequestParams params = new RequestParams();
-		params.put("entities","false");
+		params.put("entities","true");
 		getClient().get(apiUrl, params, handler);
 	}
 

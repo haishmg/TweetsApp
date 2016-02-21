@@ -46,7 +46,9 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = RestApplication.getRestClient();
         currentUser = new User();
-        allTweets = new ArrayList<Tweet>();
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("User"));
+
+                allTweets = new ArrayList<Tweet>();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvTweets);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -101,11 +103,9 @@ public class TimelineActivity extends AppCompatActivity {
     private void populateTimeline() {
 
         client.getHomeTimeline(new JsonHttpResponseHandler() {
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
-
                 for (int i = 0; i < response.length(); i++) {
                     Tweet tweet = null;
                     try {
@@ -118,9 +118,7 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
 
-
             }
-
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
@@ -133,26 +131,13 @@ public class TimelineActivity extends AppCompatActivity {
     public void insertNewTweet(View v) {
 
         Intent intent = new Intent(this, InsertTweetActivity.class);
-        client.getCurrentUserInfo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                currentUser = User.fromJson(response);
-            }
-
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                System.out.print("Inside failure");
-            }
-        });
         if (currentUser.getName() != null) {
             intent.putExtra("User", Parcels.wrap(currentUser));
             intent.putExtra("noUser", "false");
         }
         else
             intent.putExtra("noUser", "true");
+
         startActivityForResult(intent, REQUEST_CODE_DISPLAY);
 
     }
