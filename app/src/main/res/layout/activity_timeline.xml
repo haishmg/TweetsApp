@@ -33,9 +33,9 @@
         android:src="@drawable/ic_twitter_blue"
         android:onClick="insertNewTweet"
         android:background="@color/titlebar"
-        android:layout_alignBottom="@+id/tbSearch"
         android:layout_alignRight="@+id/tbSearch"
-        android:layout_alignEnd="@+id/tbSearch" />
+        android:layout_alignEnd="@+id/tbSearch"
+        android:layout_alignBottom="@+id/tbSearch" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

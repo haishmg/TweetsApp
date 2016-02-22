@@ -70,8 +70,13 @@ public class Tweet {
                     System.out.println(unixTime);
 
                     CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(unixTime, currentTime, 60000);
-                    if (relativeTime.toString().contains("minutes"))
+                    if (relativeTime.toString().contains("minutes ago")) {
                         relativeTime = relativeTime.toString().replace("minutes ago", "m");
+                    }
+                    else if (relativeTime.toString().contains("minutes")) {
+                        relativeTime = relativeTime.toString().replace("minutes", "m");
+                        relativeTime = relativeTime.toString().replace("In", "");
+                    }
                     else if (relativeTime.toString().contains("minute"))
                         relativeTime = relativeTime.toString().replace("minute ago", "m");
                     else if (relativeTime.toString().contains("hours"))

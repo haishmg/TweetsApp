@@ -74,7 +74,9 @@
         android:layout_below="@+id/tVTimeSincePosting"
         android:layout_toRightOf="@+id/ivProfilePicture"
         android:layout_alignRight="@+id/tVTimeSincePosting"
-        android:layout_alignEnd="@+id/tVTimeSincePosting" />
+        android:layout_alignEnd="@+id/tVTimeSincePosting"
+        android:autoLink="all"
+        />
 
     <View android:id="@+id/separator"
         android:background="#AB9B96"
@@ -83,5 +85,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/ivPhoto" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivPlay"
+        android:src="@drawable/ic_play"
+        android:longClickable="false"
+        android:onClick="playVideo"
+        android:layout_alignBottom="@+id/ivPhoto"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>

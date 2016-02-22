@@ -55,16 +55,30 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         //Glide.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).fitCenter().into(holder.ivProfilePicture);
         Picasso.with(context).load(allTweets.get(position).getUser().getProfileImageUrl()).transform(new CircleTransform()).into(holder.ivProfilePicture);
         holder.tvTimeSincePosting.setText(allTweets.get(position).getRelativeTime());
-        if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals("")) {
-            holder.ivPhoto.clearFocus();
+
+        if (!allTweets.get(position).getEntity().getVideo_url().equals("") && allTweets.get(position).getEntity().getVideo_url() != null) {
+           String video_url = allTweets.get(position).getEntity().getVideo_url();
+            holder.ivPlay.setVisibility(View.VISIBLE);
+            Glide.with(context).load(video_url).fitCenter().into(holder.ivPhoto);
+        }
+        else if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals(""))
+        {
+            holder.ivPlay.setVisibility(View.GONE);
             Glide.with(context).load(allTweets.get(position).getEntity().getMedia_url()).fitCenter().into(holder.ivPhoto);
         }
+
+      //  if (allTweets.get(position).getEntity().getMedia_url() != null &&  !allTweets.get(position).getEntity().getMedia_url().equals("")) {
+      //      holder.ivPhoto.clearFocus();
+      //      Glide.with(context).load(allTweets.get(position).getEntity().getMedia_url()).fitCenter().into(holder.ivPhoto);
+      //  }
         else{
             holder.ivPhoto.setImageDrawable(null);
         }
 
 
     }
+
+
 
     private int[] getViewLocations(View view) {
         int[] locations = new int[2];
@@ -119,11 +133,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
     public class ArticleViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
 
+
         TextView tvUserName;
         TextView tvTimeSincePosting;
         TextView tvTweet;
         ImageView ivPhoto;
         ImageView ivProfilePicture;
+        ImageView ivPlay;
 
 
         public ArticleViewHolders(View itemView) {
@@ -134,6 +150,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
              tvTweet = (TextView) itemView.findViewById(R.id.tvTweet);
              ivPhoto = (ImageView) itemView.findViewById(R.id.ivPhoto);
              ivProfilePicture = (ImageView) itemView.findViewById(R.id.ivProfilePicture);
+             ivPlay = (ImageView) itemView.findViewById(R.id.ivPlay);
         }
 
         public void onClick(View v) {

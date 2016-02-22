@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +28,26 @@ public class InsertTweetActivity extends AppCompatActivity {
     @Bind(R.id.btnTweet) Button btnTweet;
     @Bind(R.id.etStatus) EditText etStatus;
     @Bind(R.id.tvUserName) TextView tvUserName;
+    @Bind(R.id.tvCharacters) TextView tvCharacters;
 
+    private final TextWatcher mTextEditorWatcher = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //This sets a textview to the current length
+            tvCharacters.setText(String.valueOf(s.length()));
+            if(s.length()>=140) {
+                tvCharacters.setTextColor(Color.RED);
+                btnTweet.setEnabled(false);
+            }
+            else
+                btnTweet.setEnabled(true);
+        }
+
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +61,9 @@ public class InsertTweetActivity extends AppCompatActivity {
         Picasso.with(InsertTweetActivity.this).load(getIntent().getExtras().getString("profileURl")).transform(new CircleTransform()).into(ivProfilePicture);
         tvUserName.setText(getIntent().getExtras().getString("name"));
        // }
+        etStatus.addTextChangedListener(mTextEditorWatcher);
+
+
     }
 
     public void insertTweetDone(View v){

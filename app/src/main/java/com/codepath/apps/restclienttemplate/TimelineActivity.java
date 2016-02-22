@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ListView;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
@@ -29,9 +30,10 @@ public class TimelineActivity extends AppCompatActivity {
     TweetsAdapter rcAdapter;
     LinearLayoutManager linearLayoutManager;
     private static int count = 50;
-    private  long since_id = 1;
-    private  long max_id = 1;
-    @Bind((R.id.swipeContainer)) SwipeRefreshLayout swipeContainer;
+    private long since_id = 1;
+    private long max_id = 1;
+    @Bind((R.id.swipeContainer))
+    SwipeRefreshLayout swipeContainer;
     private final int REQUEST_CODE_DISPLAY = 30;
     User currentUser;
     private String status;
@@ -48,7 +50,7 @@ public class TimelineActivity extends AppCompatActivity {
         client = RestApplication.getRestClient();
         currentUser = new User();
 
-         allTweets = new ArrayList<Tweet>();
+        allTweets = new ArrayList<Tweet>();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvTweets);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -59,15 +61,15 @@ public class TimelineActivity extends AppCompatActivity {
         populateTimeline();
 
 
-       swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-           @Override
-           public void onRefresh() {
-               allTweets.clear();
-               rcAdapter.notifyDataSetChanged();
-               populateTimeline();
-               swipeContainer.setRefreshing(false);
-           }
-       });
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                allTweets.clear();
+                rcAdapter.notifyDataSetChanged();
+                populateTimeline();
+                swipeContainer.setRefreshing(false);
+            }
+        });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -133,7 +135,6 @@ public class TimelineActivity extends AppCompatActivity {
     public void insertNewTweet(View v) {
 
         client.getCurrentUserInfo(new JsonHttpResponseHandler() {
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -142,7 +143,6 @@ public class TimelineActivity extends AppCompatActivity {
                 intent.putExtra("name", currentUser.getName());
                 intent.putExtra("profileURl", currentUser.getProfileImageUrl());
                 startActivityForResult(intent, REQUEST_CODE_DISPLAY);
-
             }
 
             @Override
@@ -163,7 +163,7 @@ public class TimelineActivity extends AppCompatActivity {
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
                     insertedTweet = Tweet.fromJson(response);
-                    allTweets.add(0,insertedTweet);
+                    allTweets.add(0, insertedTweet);
                     rcAdapter.notifyItemRangeInserted(0, 1);
                     linearLayoutManager.scrollToPositionWithOffset(0, 0);
                 }
@@ -174,17 +174,27 @@ public class TimelineActivity extends AppCompatActivity {
                     System.out.print("Inside failure");
                 }
             }, status);
-           // allTweets.clear();
-          //  rcAdapter.notifyDataSetChanged();
-           // populateTimeline();
         }
 
     }
 
+    public void playVideo(View v) {
+        View parentRow = (View) v.getParent();
+        ListView listView = (ListView) parentRow.getParent();
+        final int position = listView.getPositionForView(parentRow);
+        String url = allTweets.get(position).getEntity().getVideo_url();
+        if(url != null) {
+            Intent i = new Intent(TimelineActivity.this, VideoPlayerActivity.class);
+            i.putExtra("url", url);
+            startActivityForResult(i, 200);
+        }
+
+    }
 
     private void getmoreTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             int initSize = allTweets.size();
+
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -194,14 +204,14 @@ public class TimelineActivity extends AppCompatActivity {
                     try {
                         tweet = Tweet.fromJson(response.getJSONObject(i));
                         allTweets.add(tweet);
-                       // rcAdapter.notifyItemRangeInserted
-                       //rcAdapter.notifyItemChanged(allTweets.size());
+                        // rcAdapter.notifyItemRangeInserted
+                        //rcAdapter.notifyItemChanged(allTweets.size());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                rcAdapter.notifyItemRangeInserted(initSize,allTweets.size());
+                rcAdapter.notifyItemRangeInserted(initSize, allTweets.size());
             }
 
 

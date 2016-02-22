@@ -40,6 +40,7 @@ public class RestClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", count);
 		params.put("since_id",since_id);
+		params.put("entities","true");
 		getClient().get(apiUrl, params, handler);
 		System.out.println("Inside!!");
 	}
@@ -50,6 +51,8 @@ public class RestClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", count);
 		params.put("max_id", max_id);
+		params.put("entities","true");
+
 		getClient().get(apiUrl, params, handler);
 	}
 
@@ -63,7 +66,7 @@ public class RestClient extends OAuthBaseClient {
 	public void getCurrentUserInfo(AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("account/verify_credentials.json");
 		RequestParams params = new RequestParams();
-		params.put("entities","true");
+		params.put("entities", "true");
 		getClient().get(apiUrl, params, handler);
 	}
 
