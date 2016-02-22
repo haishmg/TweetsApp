@@ -19,7 +19,6 @@ public class Entity {
         return video_url;
     }
 
-
     public static Entity fromJson(JSONObject jsonObject) {
         Entity u = new Entity();
         u.media_url="";

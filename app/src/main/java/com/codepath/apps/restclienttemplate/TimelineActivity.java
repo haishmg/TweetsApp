@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
@@ -18,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -96,40 +98,53 @@ public class TimelineActivity extends AppCompatActivity {
         getmoreTimeline();
     }
 
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        return false;
+    }
+
     private void populateTimeline() {
         allTweets.clear();
         rcAdapter.notifyDataSetChanged();
         since_id = 1;
         max_id = 1;
         int initSize = allTweets.size();
+        if (isOnline() == true) {
+            client.getHomeTimeline(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    super.onSuccess(statusCode, headers, response);
+                    for (int i = 0; i < response.length(); i++) {
+                        Tweet tweet = null;
+                        try {
+                            tweet = Tweet.fromJson(response.getJSONObject(i));
+                            allTweets.add(tweet);
+                            //rcAdapter.notifyItemChanged(allTweets.size());
+                            rcAdapter.notifyItemRangeInserted(i, allTweets.size());
 
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                super.onSuccess(statusCode, headers, response);
-                for (int i = 0; i < response.length(); i++) {
-                    Tweet tweet = null;
-                    try {
-                        tweet = Tweet.fromJson(response.getJSONObject(i));
-                        allTweets.add(tweet);
-                        //rcAdapter.notifyItemChanged(allTweets.size());
-                        rcAdapter.notifyItemRangeInserted(i, allTweets.size());
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
 
-            }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    System.out.print("Inside failure");
+                }
+            }, since_id, count);
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                System.out.print("Inside failure");
-            }
-        }, since_id, count);
-
-
+        }else {
+            Toast.makeText(TimelineActivity.this, "No data found, please check your internet and try again", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void insertNewTweet(View v) {

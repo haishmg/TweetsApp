@@ -17,7 +17,9 @@
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/titlebar">
+        android:background="@color/titlebar"
+        android:layout_alignRight="@+id/swipeContainer"
+        android:layout_alignEnd="@+id/swipeContainer">
 
     </android.support.v7.widget.Toolbar>
 
@@ -31,10 +33,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/ibCreateTweet"
         android:src="@drawable/ic_twitter_blue"
-        android:onClick="insertNewTweet"
         android:background="@color/titlebar"
-        android:layout_alignRight="@+id/tbSearch"
-        android:layout_alignEnd="@+id/tbSearch"
+        android:layout_alignTop="@+id/tbSearch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/tbSearch" />
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -57,7 +59,28 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/tbSearch"
+        android:src="@android:mipmap/sym_def_app_icon"
+        android:layout_above="@+id/swipeContainer"
+        android:layout_alignRight="@+id/tbSearch"
+        android:layout_alignEnd="@+id/tbSearch" />
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibAdd"
+        android:src="@mipmap/ic_add"
+        android:onClick="insertNewTweet"
+        android:background="@color/titlebar"
+        android:layout_alignTop="@+id/tbSearch"
+        android:layout_alignRight="@+id/imageView"
+        android:layout_alignEnd="@+id/imageView"
+        android:layout_alignBottom="@+id/tbSearch" />
 
 
 </RelativeLayout>
