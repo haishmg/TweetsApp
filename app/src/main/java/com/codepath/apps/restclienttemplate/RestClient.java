@@ -1,11 +1,9 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
-
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
@@ -32,9 +30,6 @@ public class RestClient extends OAuthBaseClient {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
-
 	public void getHomeTimeline(AsyncHttpResponseHandler handler, long since_id, int count) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
@@ -42,17 +37,32 @@ public class RestClient extends OAuthBaseClient {
 		params.put("since_id",since_id);
 		params.put("entities","true");
 		getClient().get(apiUrl, params, handler);
-		System.out.println("Inside!!");
 	}
 
+
+	public void getMentionsTimeline(AsyncHttpResponseHandler handler, int count) {
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		params.put("entities","true");
+		getClient().get(apiUrl, params, handler);
+	}
+
+	public void getMoreMentionsTimeline(AsyncHttpResponseHandler handler, long max_id, int count) {
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		params.put("max_id", max_id);
+		params.put("entities","true");
+		getClient().get(apiUrl, params, handler);
+	}
 
 	public void getMoreTimeline(AsyncHttpResponseHandler handler, long max_id, int count) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", count);
+		params.put("count", 25);
 		params.put("max_id", max_id);
 		params.put("entities","true");
-
 		getClient().get(apiUrl, params, handler);
 	}
 
@@ -70,15 +80,22 @@ public class RestClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, handler);
 	}
 
-	// Compose a tweet another mehthod like the above
+	public void getUserTimeline(AsyncHttpResponseHandler handler,String screenName){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count",25);
+		params.put("entities", "true");
+		params.put("screen_name",screenName);
+		getClient().get(apiUrl, params, handler);
+	}
 
-
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
+	public void getMoreUserTimeline(AsyncHttpResponseHandler handler,String screenName, long max_id){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count",25);
+		params.put("entities", "true");
+		params.put("screen_name",screenName);
+		params.put("max_id", max_id);
+		getClient().get(apiUrl, params, handler);
+	}
 }

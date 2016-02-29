@@ -9,8 +9,45 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".TimelineActivity"
     android:windowActionBar="false"
-    android:windowTitleSize="0dp">
+    android:windowTitleSize="0dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
+<!--
+    <fragment
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:name="com.codepath.apps.restclienttemplate.fragments.MentionsTimelineFragment"
+        android:id="@+id/fragment_timeline"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        tools:layout="@layout/fragment_tweets_list"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+-->
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        app:pstsShouldExpand="true"
+        app:pstsTextAllCaps="true"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:fillViewport="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tbSearch" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tabs" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tbSearch"
@@ -23,11 +60,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-
-
-
-
-
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,52 +67,32 @@
         android:src="@drawable/ic_twitter_blue"
         android:background="@color/titlebar"
         android:layout_alignTop="@+id/tbSearch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/tbSearch" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/ibCreateTweet">
-
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvTweets"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="10sp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/swipeContainer" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tbSearch"
-        android:src="@android:mipmap/sym_def_app_icon"
-        android:layout_above="@+id/swipeContainer"
-        android:layout_alignRight="@+id/tbSearch"
-        android:layout_alignEnd="@+id/tbSearch" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ibAdd"
-        android:src="@mipmap/ic_add"
+        android:src="@drawable/ic_compose"
         android:onClick="insertNewTweet"
         android:background="@color/titlebar"
-        android:layout_alignTop="@+id/tbSearch"
-        android:layout_alignRight="@+id/imageView"
-        android:layout_alignEnd="@+id/imageView"
-        android:layout_alignBottom="@+id/tbSearch" />
+        android:layout_marginRight="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imageButton"
+        android:layout_above="@+id/swipeContainer" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_profile"
+        android:background="@color/titlebar"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/swipeContainer"
+        android:onClick="onProfileView"/>
 
 
 </RelativeLayout>

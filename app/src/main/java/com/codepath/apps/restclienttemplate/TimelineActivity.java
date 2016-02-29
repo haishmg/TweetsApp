@@ -2,197 +2,160 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.codepath.apps.restclienttemplate.fragments.HomeTimelineFragment;
+import com.codepath.apps.restclienttemplate.fragments.MentionsTimelineFragment;
+import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    private RestClient client;
-    ArrayList<Tweet> allTweets;
-    TweetsAdapter rcAdapter;
-    LinearLayoutManager linearLayoutManager;
     private static int count = 50;
     private long since_id = 1;
     private long max_id = 1;
-    @Bind((R.id.swipeContainer))
-    SwipeRefreshLayout swipeContainer;
     private final int REQUEST_CODE_DISPLAY = 30;
     User currentUser;
     private String status;
     Tweet insertedTweet;
+    TweetsListFragment fragmentTweetsList;
+
+
+    ArrayList<Tweet> allTweets;
+    RestClient client;
+    ViewPager vpPager;
+    TweetsPagerAdapter twPagerAdapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        ButterKnife.bind(this);
-        //getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        //getActionBar().hide();
+        allTweets= new ArrayList<Tweet>();
         client = RestApplication.getRestClient();
-        currentUser = new User();
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        twPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(twPagerAdapter);
+        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabStrip.setViewPager(vpPager);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tbSearch);
+        setSupportActionBar(toolbar);
 
-        allTweets = new ArrayList<Tweet>();
+    }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvTweets);
-        linearLayoutManager = new LinearLayoutManager(this);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
 
-        recyclerView.setLayoutManager(linearLayoutManager);
-        rcAdapter = new TweetsAdapter(TimelineActivity.this, allTweets);
-        recyclerView.setAdapter(rcAdapter);
-        populateTimeline();
+    }
+
+    //Return the order of the fragments in the view adapter
 
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                allTweets.clear();
-                rcAdapter.notifyDataSetChanged();
-                populateTimeline();
-                swipeContainer.setRefreshing(false);
+    public void onProfileView(View v){
+        Intent n = new Intent(this,UserProfileActivity.class);
+        startActivity(n);
+    }
+
+    public class TweetsPagerAdapter extends FragmentPagerAdapter{
+        private String tabTitles[] = {"Home","Mentions"};
+
+        public TweetsPagerAdapter(FragmentManager fm){
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(position == 0){
+                return new HomeTimelineFragment();
             }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-
-        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                customLoadMoreDataFromApi(page);
+            else if(position == 1){
+                return new MentionsTimelineFragment();
             }
-        });
+            else{
+                return null;
+            }
+        }
 
-    }
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
 
-    // This method probably sends out a network request and appends new data items to your adapter.
-    public void customLoadMoreDataFromApi(int offset) {
-        //allTweets.clear();
-        //rcAdapter.notifyDataSetChanged();
-        max_id = allTweets.get(allTweets.size() - 1).getUid();
-        getmoreTimeline();
-    }
-
-    public boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
-        return false;
-    }
-
-    private void populateTimeline() {
-        allTweets.clear();
-        rcAdapter.notifyDataSetChanged();
-        since_id = 1;
-        max_id = 1;
-        int initSize = allTweets.size();
-        if (isOnline() == true) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    super.onSuccess(statusCode, headers, response);
-                    for (int i = 0; i < response.length(); i++) {
-                        Tweet tweet = null;
-                        try {
-                            tweet = Tweet.fromJson(response.getJSONObject(i));
-                            allTweets.add(tweet);
-                            //rcAdapter.notifyItemChanged(allTweets.size());
-                            rcAdapter.notifyItemRangeInserted(i, allTweets.size());
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    System.out.print("Inside failure");
-                }
-            }, since_id, count);
-
-        }else {
-            Toast.makeText(TimelineActivity.this, "No data found, please check your internet and try again", Toast.LENGTH_LONG).show();
+        @Override
+        public int getCount() {
+            return tabTitles.length;
         }
     }
 
-    public void insertNewTweet(View v) {
 
-        client.getCurrentUserInfo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                currentUser = User.fromJson(response);
-                Intent intent = new Intent(TimelineActivity.this, InsertTweetActivity.class);
-                intent.putExtra("name", currentUser.getName());
-                intent.putExtra("profileURl", currentUser.getProfileImageUrl());
-                startActivityForResult(intent, REQUEST_CODE_DISPLAY);
-            }
+        public void insertNewTweet(View v) {
+            Intent intent = new Intent(TimelineActivity.this, InsertTweetActivity.class);
+            startActivity(intent);
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-            }
-        });
-
-
-    }
-
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DISPLAY) {
-            status = data.getExtras().getString("status");
-            client.insertTweet(new JsonHttpResponseHandler() {
+/*
+            client.getCurrentUserInfo(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    insertedTweet = Tweet.fromJson(response);
-                    allTweets.add(0, insertedTweet);
-                    rcAdapter.notifyItemRangeInserted(0, 1);
-                    linearLayoutManager.scrollToPositionWithOffset(0, 0);
+                    currentUser = User.fromJson(response);
+                    Intent intent = new Intent(TimelineActivity.this, InsertTweetActivity.class);
+                    intent.putExtra("name", currentUser.getName());
+                    intent.putExtra("profileURl", currentUser.getProfileImageUrl());
+                    startActivityForResult(intent, REQUEST_CODE_DISPLAY);
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    System.out.print("Inside failure");
                 }
-            }, status);
+            });
+
+*/
         }
 
-    }
 
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+           // if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DISPLAY) {
+                status = data.getExtras().getString("status");
+                //twPagerAdapter.
+                twPagerAdapter.notifyDataSetChanged();
+
+              /*  client.insertTweet(new JsonHttpResponseHandler() {
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        super.onSuccess(statusCode, headers, response);
+                        insertedTweet = Tweet.fromJson(response);
+                        allTweets.add(0, insertedTweet);
+                        //rcAdapter.notifyItemRangeInserted(0, 1);
+                        //linearLayoutManager.scrollToPositionWithOffset(0, 0);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        System.out.print("Inside failure");
+                    }
+                }, status);
+            }*/
+
+          //  }
+
+    /*
     public void playVideo(View v) {
         View parentRow = (View) v.getParent();
         ListView listView = (ListView) parentRow.getParent();
@@ -206,37 +169,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     }
 
-    private void getmoreTimeline() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            int initSize = allTweets.size();
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                super.onSuccess(statusCode, headers, response);
-
-                for (int i = 0; i < response.length(); i++) {
-                    Tweet tweet = null;
-                    try {
-                        tweet = Tweet.fromJson(response.getJSONObject(i));
-                        allTweets.add(tweet);
-                        // rcAdapter.notifyItemRangeInserted
-                        //rcAdapter.notifyItemChanged(allTweets.size());
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                rcAdapter.notifyItemRangeInserted(initSize, allTweets.size());
-            }
+    */
 
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                System.out.print("Inside failure");
-            }
-        }, max_id, count);
-    }
-
-
+        }
 }

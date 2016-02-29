@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -35,6 +36,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         this.context = context;
     }
 
+    public void addAll(ArrayList<Tweet> allTweets){
+        this.allTweets = allTweets;
+    }
     @Override
     public ArticleViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -47,6 +51,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
 
     @Override
     public void onBindViewHolder(ArticleViewHolders holder, int position) {
@@ -74,6 +79,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
         else{
             holder.ivPhoto.setImageDrawable(null);
         }
+
 
 
     }
@@ -153,13 +159,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ArticleVie
              ivPlay = (ImageView) itemView.findViewById(R.id.ivPlay);
         }
 
+
+
         public void onClick(View v) {
-         /*   //Toast.makeText(v.getContext(), "Clicked Position view holder = " +getPosition(), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(v.getContext(), DisplayArticle.class);
-            NYTArticle article =  articleList.get(getPosition());
-            intent.putExtra("article", Parcels.wrap(article));
+            //Toast.makeText(v.getContext(), "Clicked Position view holder = " +getPosition(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(v.getContext(),UserProfileActivity.class);
+            intent.putExtra("screen_name",tvUserName.getText().toString());
             v.getContext().startActivity(intent);
-*/
+
         }
 
     }
